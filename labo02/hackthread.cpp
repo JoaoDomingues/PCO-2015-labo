@@ -20,7 +20,11 @@ long long unsigned int intPow (
     return number;
 }
 
-hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int nbChars, long long unsigned int nbToCompute, long long unsigned int borneDepart,QObject *parent) :
+void incrementBar(double percentComputed){
+
+}
+
+hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int nbChars, long long unsigned int nbToCompute, long long unsigned int borneDepart, QObject *parent) :
     QThread(parent)
 {
     this->charset = charset;
@@ -33,9 +37,6 @@ hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int
 
 void hackThread::run()
 {
-
-    emit iFoundIt("LOL");
-
     unsigned int i;
 
     long long unsigned int nbComputed;
@@ -103,7 +104,7 @@ void hackThread::run()
          * de l'état de notre avancement (pour la barre de progression)
          */
         if (!(nbComputed % 1000))
-            emit incrementPBar((double)1000/nbToCompute);
+            emit incrementBar((double)1000/nbToCompute);
 
         /*
          * On récupère le mot de pass à tester suivant.

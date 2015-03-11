@@ -20,10 +20,18 @@ void ThreadManager::iFoundIt(QString answer)
 }
 
 /*
- * Propage le signal de progression à mainwindow
+ * Cette fonction est appelée lorsqu'un thread a avancé dans sa progression.
+ * Retransmet l'inforamtion à mainWindow
  */
 void ThreadManager::incrementPBar(double percent){
-    emit incrementPercentComputed(percent);
+
+}
+
+/*
+ * Permet de retransmettre le signal de progression reçu depuis hacktread à mainwindow
+ */
+void incrementPercentComputed(double percent){
+
 }
 
 

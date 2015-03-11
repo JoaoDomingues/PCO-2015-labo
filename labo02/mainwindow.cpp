@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 SIGNAL(finished()),
                 this,
                 SLOT(endHacking()));
+
     connect(
                 threadManager,
                 SIGNAL(incrementPercentComputed(double)),

@@ -10,7 +10,7 @@ class ThreadManager: public QObject
     Q_OBJECT
 private:
     QString answer;
-    hackThread[] *thread;
+    hackThread **thread;
 
 public:
     ThreadManager(QObject *parent);

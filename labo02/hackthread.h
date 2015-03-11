@@ -30,7 +30,7 @@ private:
     QString currentPasswordString;
 
 signals:
-    void incrementPBar(double percentComputed);
+    void incrementBar(double percentComputed);
     void iFoundIt(QString answer);
 };
 
