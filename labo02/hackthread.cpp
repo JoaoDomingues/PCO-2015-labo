@@ -1,25 +1,5 @@
 #include "hackthread.h"
 
-/*
- * std::pow pour les long long unsigned int
- */
-long long unsigned int intPow (
-        long long unsigned int number,
-        long long unsigned int index)
-{
-    long long unsigned int i;
-
-    if (index == 0)
-        return 1;
-
-    long long unsigned int num = number;
-
-    for (i = 1; i < index; i++)
-        number *= num;
-
-    return number;
-}
-
 void incrementBar(double percentComputed){
 
 }
@@ -33,6 +13,12 @@ hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int
     this->nbChars = nbChars;
     this->nbToCompute = nbToCompute;
     this->borneDepart = borneDepart;
+    isRunning = true;
+}
+
+void hackThread::stop(){
+    qDebug() << "I stop now!";
+    isRunning = false;
 }
 
 void hackThread::run()
@@ -50,7 +36,7 @@ void hackThread::run()
      * Tableau contenant les index dans la chaine charset des caractères de
      * currentPasswordString
      */
-    QVector<unsigned int> currentPasswordArray;
+    QVector<unsigned int> currentPasswordArray(nbChars);
 
     /*
      * Hash du mot de passe à tester courant
@@ -65,7 +51,6 @@ void hackThread::run()
     /*
      * Calcul du nombre de hash à générer
      */
-    nbToCompute        = intPow(charset.length(),nbChars);
     nbComputed         = 0;
 
     /*
@@ -73,17 +58,26 @@ void hackThread::run()
      */
     nbValidChars       = charset.length();
 
+
     /*
-     * On initialise le premier mot de passe à tester courant en le remplissant
-     * de nbChars fois du premir carcatère de charset
+     * On initialise le premier mot de passe avec le mot de passe correspondant
+     * à la borne de départ
      */
-    currentPasswordString.fill(charset.at(0),nbChars);
-    currentPasswordArray.fill(0,nbChars);
+    int arrayIndex = 0;
+    while(borneDepart != 0){
+        currentPasswordArray[arrayIndex] = borneDepart % nbValidChars;
+        borneDepart -= currentPasswordArray[arrayIndex];
+        borneDepart /= nbValidChars;
+        arrayIndex++;
+    }
+    for (i=0;i<nbChars;i++)
+        currentPasswordString[i]  = charset.at(currentPasswordArray.at(i));
 
     /*
      * Tant qu'on a pas tout essayé...
      */
-    while (nbComputed < nbToCompute) {
+    while (nbComputed < nbToCompute && isRunning) {
+        qDebug() << currentPasswordString;
         /* On vide les données déjà ajoutées au générateur */
         md5.reset();
         /* On préfixe le mot de passe avec le sel */
@@ -95,9 +89,10 @@ void hackThread::run()
         /*
          * Si on a trouvé, on retourne le mot de passe courant (sans le sel)
          */
-        if (currentHash == hash)
+        if (currentHash == hash){
             emit iFoundIt(currentPasswordString);
             return;
+        }
 
         /*
          * Tous les 1000 hash calculés, on notifie qui veut bien entendre

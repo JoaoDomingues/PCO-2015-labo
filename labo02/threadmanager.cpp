@@ -3,6 +3,25 @@
 
 #include "threadmanager.h"
 
+/*
+ * std::pow pour les long long unsigned int
+ */
+long long unsigned int intPow (
+        long long unsigned int number,
+        long long unsigned int index)
+{
+    long long unsigned int i;
+
+    if (index == 0)
+        return 1;
+
+    long long unsigned int num = number;
+
+    for (i = 1; i < index; i++)
+        number *= num;
+
+    return number;
+}
 
 ThreadManager::ThreadManager(QObject *parent) :
     QObject(parent)
@@ -17,6 +36,9 @@ ThreadManager::ThreadManager(QObject *parent) :
 void ThreadManager::iFoundIt(QString answer)
 {
     this->answer = answer;
+    for(unsigned int i = 0; i < threadList.length(); i++){
+        threadList.at(i)->stop();
+    }
 }
 
 /*
@@ -24,14 +46,7 @@ void ThreadManager::iFoundIt(QString answer)
  * Retransmet l'inforamtion à mainWindow
  */
 void ThreadManager::incrementPBar(double percent){
-
-}
-
-/*
- * Permet de retransmettre le signal de progression reçu depuis hacktread à mainwindow
- */
-void incrementPercentComputed(double percent){
-
+    emit incrementPercentComputed(percent);
 }
 
 
@@ -55,14 +70,32 @@ QString ThreadManager::startHacking(
         unsigned int nbThreads
 )
 {
-    long long unsigned int nbPossibilite = pow(nbChars, 62.);
+
+    long long unsigned int nbPossibilite = intPow(charset.length(),nbChars);
     int interval = nbPossibilite/nbThreads;
-    for(int i = 0; i < nbThreads; i++)
+    hackThread *currentThread;
+
+    /* Créé les threads, on ajoutant leur pointeur à la liste.
+     * Un appel à la méthode start() apellera la méthode run() de la classe MyThread */
+    for (unsigned int i=0; i<nbThreads; i++)
     {
-        thread[i]= new hackThread(charset, salt, hash, nbChars, interval, i*interval ,0);
-        thread[i]->wait();
-        delete thread[i];
+        currentThread = new hackThread(charset, salt, hash, nbChars, interval, i*interval ,0);
+        threadList.append(currentThread);
+
+        connect(
+                    currentThread,
+                    SIGNAL(iFoundIt(QString)),
+                    this,
+                    SLOT(iFoundIt(QString)));
+        connect(
+                    currentThread,
+                    SIGNAL(incrementBar(double)),
+                    this,
+                    SLOT(incrementPBar(double)));
+
+        currentThread->start();
+        currentThread->wait();
     }
-    //thread = new hackThread(charset, salt, hash, nbChars, interval ,0);
+
     return answer;
 }

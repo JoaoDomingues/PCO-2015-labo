@@ -9,6 +9,7 @@ class hackThread : public QThread
     Q_OBJECT
 public:
     explicit hackThread(QString charset, QString salt, QString hash, unsigned int nbChars, long long unsigned int nbToCompute, long long unsigned int borneDepart,QObject *parent = 0);
+    void stop();
 signals:
 
 public slots:
@@ -21,6 +22,7 @@ private:
 
     QString salt;
     QString hash;
+    bool isRunning;
 
     unsigned int nbChars;
     long long unsigned int nbToCompute;
