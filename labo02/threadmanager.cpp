@@ -94,7 +94,10 @@ QString ThreadManager::startHacking(
                     SLOT(incrementPBar(double)));
 
         currentThread->start();
-        currentThread->wait();
+    }
+
+    for(unsigned int i = 0; i < threadList.length(); i++){
+        threadList.at(i)->wait();
     }
 
     return answer;

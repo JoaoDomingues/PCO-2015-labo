@@ -17,7 +17,6 @@ hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int
 }
 
 void hackThread::stop(){
-    qDebug() << "I stop now!";
     isRunning = false;
 }
 
@@ -70,14 +69,14 @@ void hackThread::run()
         borneDepart /= nbValidChars;
         arrayIndex++;
     }
-    for (i=0;i<nbChars;i++)
+    for (i=0;i<nbChars;i++){
         currentPasswordString[i]  = charset.at(currentPasswordArray.at(i));
+    }
 
     /*
      * Tant qu'on a pas tout essayé...
      */
     while (nbComputed < nbToCompute && isRunning) {
-        qDebug() << currentPasswordString;
         /* On vide les données déjà ajoutées au générateur */
         md5.reset();
         /* On préfixe le mot de passe avec le sel */
