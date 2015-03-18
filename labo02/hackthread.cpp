@@ -1,10 +1,16 @@
+/*
+ * Bastien Rouiller & Stéphane Donnet
+ * Lab02
+ * PCO
+ */
+
 #include "hackthread.h"
 
 void incrementBar(double percentComputed){
 
 }
 
-hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int nbChars, long long unsigned int nbToCompute, long long unsigned int borneDepart, QObject *parent) :
+hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int nbChars, long long unsigned int nbToCompute, long long unsigned int borneDepart, long long unsigned int nbPossibilite, QObject *parent) :
     QThread(parent)
 {
     this->charset = charset;
@@ -13,6 +19,8 @@ hackThread::hackThread(QString charset, QString salt, QString hash, unsigned int
     this->nbChars = nbChars;
     this->nbToCompute = nbToCompute;
     this->borneDepart = borneDepart;
+    this->nbPossibilite = nbPossibilite;
+
     isRunning = true;
 }
 
@@ -60,7 +68,8 @@ void hackThread::run()
 
     /*
      * On initialise le premier mot de passe avec le mot de passe correspondant
-     * à la borne de départ
+     * à la borne de départ. Attention! Les solutions s'incrémentent à partir de
+     * la lettre de poids faible.
      */
     int arrayIndex = 0;
     while(borneDepart != 0){
@@ -97,8 +106,8 @@ void hackThread::run()
          * Tous les 1000 hash calculés, on notifie qui veut bien entendre
          * de l'état de notre avancement (pour la barre de progression)
          */
-        if (!(nbComputed % 1000))
-            emit incrementBar((double)1000/nbToCompute);
+        if (!(nbComputed % 2000))
+            emit incrementBar((double)2000/nbPossibilite);
 
         /*
          * On récupère le mot de pass à tester suivant.

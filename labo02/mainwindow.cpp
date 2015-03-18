@@ -1,4 +1,10 @@
- #include <QMessageBox>
+/*
+ * Bastien Rouiller & Stéphane Donnet
+ * Lab02
+ * PCO
+ */
+
+#include <QMessageBox>
 #include <QtConcurrent>
 
 #include "mainwindow.h"

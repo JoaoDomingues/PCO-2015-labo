@@ -1,3 +1,9 @@
+/*
+ * Bastien Rouiller & Stéphane Donnet
+ * Lab02
+ * PCO
+ */
+
 #ifndef THREADMANAGER_H
 #define THREADMANAGER_H
 

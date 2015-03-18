@@ -1,3 +1,9 @@
+/*
+ * Bastien Rouiller & Stéphane Donnet
+ * Lab02
+ * PCO
+ */
+
 #include <QCryptographicHash>
 #include <QVector>
 
@@ -36,7 +42,7 @@ ThreadManager::ThreadManager(QObject *parent) :
 void ThreadManager::iFoundIt(QString answer)
 {
     this->answer = answer;
-    for(unsigned int i = 0; i < threadList.length(); i++){
+    for(int i = 0; i < threadList.length(); i++){
         threadList.at(i)->stop();
     }
 }
@@ -79,9 +85,13 @@ QString ThreadManager::startHacking(
      * Un appel à la méthode start() apellera la méthode run() de la classe MyThread */
     for (unsigned int i=0; i<nbThreads; i++)
     {
-        currentThread = new hackThread(charset, salt, hash, nbChars, interval, i*interval ,0);
+        currentThread = new hackThread(charset, salt, hash, nbChars, interval, i*interval , nbPossibilite,0);
         threadList.append(currentThread);
 
+        /*
+         * On connecte les différent signaux aux threads: Celui pour incrémenter la barre et
+         * celui pour notifier que l'on à trouver une solution
+         */
         connect(
                     currentThread,
                     SIGNAL(iFoundIt(QString)),
@@ -96,9 +106,15 @@ QString ThreadManager::startHacking(
         currentThread->start();
     }
 
-    for(unsigned int i = 0; i < threadList.length(); i++){
+    /*
+     * On attend tous les threads
+     */
+    for(int i = 0; i < threadList.length(); i++){
         threadList.at(i)->wait();
     }
 
+    /*
+     * Lorsque l'on a attendu tous les threads, on peut renvoyer la réponse.
+     */
     return answer;
 }

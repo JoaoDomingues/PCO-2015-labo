@@ -1,3 +1,9 @@
+/*
+ * Bastien Rouiller & Stéphane Donnet
+ * Lab02
+ * PCO
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
